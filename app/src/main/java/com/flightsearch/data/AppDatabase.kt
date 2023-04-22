@@ -1,14 +1,13 @@
 package com.flightsearch.data
 
 import android.content.Context
-import androidx.compose.ui.focus.FocusDirection.Companion.In
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(entities = [Airport::class, Favorite::class], version = 1)
 abstract class AppDatabase: RoomDatabase() {
-
+/*Implement DAO*/
     companion object{
         @Volatile
         private var INSTANCE: AppDatabase? = null
