@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "airport")
+@Entity(tableName = "Airport")
 data class Airport(
     @PrimaryKey
     val id: Int,
