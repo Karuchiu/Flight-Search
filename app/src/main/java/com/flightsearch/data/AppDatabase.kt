@@ -16,7 +16,7 @@ abstract class AppDatabase: RoomDatabase() {
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this){
-                Room.databaseBuilder(
+                val instance = Room.databaseBuilder(
                     context,
                     AppDatabase::class.java,
                     "app_database"
@@ -26,9 +26,9 @@ abstract class AppDatabase: RoomDatabase() {
                     // Migration is not part of this codelab.
                     .fallbackToDestructiveMigration()
                     .build()
-                    .also {
-                        INSTANCE = it
-                    }
+
+                INSTANCE = instance
+                instance
             }
         }
     }
