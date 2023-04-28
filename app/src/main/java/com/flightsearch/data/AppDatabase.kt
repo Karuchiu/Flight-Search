@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Airport::class, Favorite::class], version = 1)
+@Database(entities = [Airport::class, Favorite::class], version = 2)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun airportDao(): AirportDao
@@ -22,6 +22,9 @@ abstract class AppDatabase: RoomDatabase() {
                     "app_database"
                 )
                     .createFromAsset("database/flight_search.db")
+                    // Wipes and rebuilds instead of migrating if no Migration object.
+                    // Migration is not part of this codelab.
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also {
                         INSTANCE = it
