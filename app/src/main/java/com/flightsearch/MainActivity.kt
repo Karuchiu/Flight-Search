@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.flightsearch.ui.FlightSearchApp
 import com.flightsearch.data.AppDatabase
 import com.flightsearch.ui.theme.FlightSearchTheme
 import kotlinx.coroutines.GlobalScope
@@ -30,12 +31,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+
+                    FlightSearchApp()
+
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text("The database is ready!")
                     }
+
                 }
             }
         }
