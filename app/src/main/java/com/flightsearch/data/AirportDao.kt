@@ -8,11 +8,4 @@ import kotlinx.coroutines.flow.Flow
 interface AirportDao {
     @Query(" SELECT * FROM airport ")
     fun getAll(): Flow<List<Airport>>
-
-
-@Dao
-interface AirportDao {
-    @Query("SELECT * FROM airport")
-    suspend fun getAll(): List<Airport>
-
 }
