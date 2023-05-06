@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AirportDao {
-    @Query(
-        " SELECT * FROM airport "
-    )
+    @Query(" SELECT * FROM airport ")
     fun getAll(): Flow<List<Airport>>
 }
