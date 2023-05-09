@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flightsearch.R
 import com.flightsearch.data.Airport
+import com.flightsearch.data.Favorite
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -32,12 +33,14 @@ fun FlightSearchApp(
 ) {
     val focusManager = LocalFocusManager.current
 
-    val fullScheduleTitle = stringResource(id = R.string.full_schedule)
-    val fullSchedule by viewModel.getFullSchedule().collectAsState(emptyList())
-
     var airportSearch by remember{
         mutableStateOf("")
     }
+
+    val fullScheduleTitle = stringResource(id = R.string.full_schedule)
+    val fullSchedule by viewModel.getFullSchedule().collectAsState(emptyList())
+    val scheduleBySearch by viewModel.getByUserInput(airportSearch).collectAsState(emptyList())
+    val favoriteFlights by viewModel.getFavoriteFlights().collectAsState(emptyList())
 
     Scaffold(
         topBar = {
@@ -68,7 +71,11 @@ fun FlightSearchApp(
                 ),
                 modifier = modifier.fillMaxWidth()
             )
-            FlightScheduleScreen(flightSchedules = fullSchedule)
+            if (airportSearch.isEmpty()){
+                FavoriteFlightsScreen(favoriteFlights = favoriteFlights)
+            }else{
+                AirportDetailsScreen(flightSchedules = scheduleBySearch)
+            }
         }
         
 
@@ -79,19 +86,19 @@ fun FlightSearchApp(
 }
 
 @Composable
-fun FlightScheduleScreen(
+fun AirportDetailsScreen(
     flightSchedules: List<Airport>,
     modifier: Modifier = Modifier
 ) {
-    FlightScheduleDetails(
-        flightSchedules = flightSchedules,
+    AirportDetails(
+        airports = flightSchedules,
         modifier = modifier
     )
 }
 
 @Composable
-fun FlightScheduleDetails(
-    flightSchedules: List<Airport>,
+fun AirportDetails(
+    airports: List<Airport>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -99,9 +106,9 @@ fun FlightScheduleDetails(
         contentPadding = PaddingValues(vertical = 8.dp)
     ){
         items(
-            items = flightSchedules,
+            items = airports,
             key = {it.id}
-        ){ schedule ->
+        ){ airport ->
             Row(
                 modifier
                     .fillMaxWidth()
@@ -109,7 +116,7 @@ fun FlightScheduleDetails(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = schedule.iataCode,
+                    text = airport.iataCode,
                     style = MaterialTheme.typography.body1.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight(300)
@@ -118,7 +125,67 @@ fun FlightScheduleDetails(
                     modifier = modifier.padding(start = 10.dp, end = 10.dp)
                 )
                 Text(
-                    text = schedule.name,
+                    text = airport.name,
+                    style = MaterialTheme.typography.body1.copy(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(300)
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = modifier.padding(start = 10.dp, end = 10.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun FavoriteFlightsScreen(
+    favoriteFlights: List<Favorite>,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(vertical = 12.dp)
+    ){
+        items(
+            items = favoriteFlights,
+            key = {it.id}
+        ){ flight ->
+            Column(
+                modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp, horizontal = 16.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "DEPART",
+                    style = MaterialTheme.typography.body1.copy(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(300)
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = modifier.padding(start = 10.dp, end = 10.dp)
+                )
+                Text(
+                    text = flight.departureCode,
+                    style = MaterialTheme.typography.body1.copy(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(300)
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = modifier.padding(start = 10.dp, end = 10.dp)
+                )
+                Text(
+                    text = "ARRIVE",
+                    style = MaterialTheme.typography.body1.copy(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(300)
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = modifier.padding(start = 10.dp, end = 10.dp)
+                )
+                Text(
+                    text = flight.destinationCode,
                     style = MaterialTheme.typography.body1.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight(300)

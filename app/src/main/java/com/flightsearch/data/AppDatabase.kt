@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun airportDao(): AirportDao
+    abstract fun favoriteDao(): FavoriteDao
 
     companion object{
         @Volatile
