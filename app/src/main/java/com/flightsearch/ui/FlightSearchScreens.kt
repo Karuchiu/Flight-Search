@@ -9,7 +9,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -21,12 +20,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flightsearch.R
 import com.flightsearch.data.Airport
 import com.flightsearch.data.Favorite
 import com.flightsearch.navigation.NavigationDestination
-import com.flightsearch.ui.FlightSearchViewModel.Companion.factory
 
 object FlightSearchScreens: NavigationDestination{
     override val route = "flightSearch"
@@ -37,64 +34,57 @@ object FlightSearchScreens: NavigationDestination{
 fun FlightSearchScreens(
     modifier: Modifier = Modifier,
     onAirportClick: () -> Unit = {},
-    viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory)
+    textValue: String,
+    onValueChange: (String) -> Unit,
+    airports: List<Airport>,
+    favoriteFlights: List<Favorite>
 ) {
     val focusManager = LocalFocusManager.current
 
-    var airportSearch by remember{
-        mutableStateOf("")
-    }
-
-    val fullScheduleTitle = stringResource(id = R.string.full_schedule)
-    val fullSchedule by viewModel.getFullSchedule().collectAsState(emptyList())
-    val scheduleBySearch by viewModel.getByUserInput(airportSearch).collectAsState(emptyList())
-    val favoriteFlights by viewModel.getFavoriteFlights().collectAsState(emptyList())
-
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            OutlinedTextField(
-                value = airportSearch,
-                onValueChange = {airportSearch = it },
-                label = {
-                    Text(
-                        text = stringResource(R.string.search_airport),
-                        style = MaterialTheme.typography.body1
-                    )
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {focusManager.clearFocus()}
-                ),
-                modifier = modifier.fillMaxWidth()
-            )
-            if (airportSearch.isEmpty()){
-                FavoriteFlightsScreen(favoriteFlights = favoriteFlights)
-            }else{
-                AirportDetailsScreen(
-                    flightSchedules = scheduleBySearch,
-                    onAirportClick = onAirportClick
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        OutlinedTextField(
+            value = textValue,
+            onValueChange = onValueChange,
+            label = {
+                Text(
+                    text = stringResource(R.string.search_airport),
+                    style = MaterialTheme.typography.body1
                 )
-            }
+            },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {focusManager.clearFocus()}
+            ),
+            modifier = modifier.fillMaxWidth()
+        )
+        if (textValue.isEmpty()){
+            FavoriteFlightsScreen(favoriteFlights = favoriteFlights)
+        }else{
+            AirportDetailsScreen(
+                airports = airports,
+                onAirportClick = onAirportClick
+            )
         }
+    }
 
 }
 
 @Composable
 fun AirportDetailsScreen(
     modifier: Modifier = Modifier,
-    flightSchedules: List<Airport>,
+    airports: List<Airport>,
     onAirportClick: () -> Unit = {}
 ) {
     AirportDetails(
-        airports = flightSchedules,
+        airports = airports,
         modifier = modifier,
         onAirportClick = onAirportClick
     )
