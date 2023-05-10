@@ -20,6 +20,8 @@ class FlightSearchViewModel(
 
     fun getFavoriteFlights(): Flow<List<Favorite>> = favoriteDao.getAllFavorites()
 
+    fun routeDestinations(departureCode: String): Flow<List<String>> = airPortDao.getAllCodesExcept(departureCode)
+
     companion object{
         val factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {

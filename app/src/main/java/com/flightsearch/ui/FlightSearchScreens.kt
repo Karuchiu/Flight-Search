@@ -109,7 +109,7 @@ fun AirportDetails(
                     .fillMaxWidth()
                     .padding(vertical = 16.dp, horizontal = 16.dp)
                     .clickable {
-                        onAirportClick.invoke(airport.name)
+                        onAirportClick.invoke(airport.iataCode)
                     },
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {

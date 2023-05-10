@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.flightsearch.R
+import com.flightsearch.data.Favorite
 import com.flightsearch.ui.FlightRoutes
 import com.flightsearch.ui.FlightRoutesScreen
 import com.flightsearch.ui.FlightSearchScreens
@@ -27,6 +28,10 @@ fun FlightNavHost(
     var airportSearch by remember{
         mutableStateOf("")
     }
+
+    /*var isFavorite by remember{
+        mutableStateOf(false)
+    }*/
 
     val fullScheduleTitle = stringResource(id = R.string.full_schedule)
     val airportsList by viewModel.getByUserInput(airportSearch).collectAsState(emptyList())
@@ -58,11 +63,17 @@ fun FlightNavHost(
                 arguments = listOf(navArgument(FlightRoutes.airportArgument){
                     type = NavType.StringType
                 })
-            ){
-                val airportIataCode = it.arguments?.getString(FlightRoutes.airportArgument)
+            ){ it ->
+                val departureCode = it.arguments?.getString(FlightRoutes.airportArgument)
                     ?: error("airportArgument cannot be null")
+                val destinationCodes by viewModel.routeDestinations(departureCode).collectAsState(emptyList())
                 FlightRoutesScreen(
-                    airportIataCode = airportIataCode
+                    departureCode = departureCode,
+                    destinationCodes = destinationCodes,
+                    /*isFavorite = isFavorite,
+                    onFavoriteChange = {
+                        isFavorite = !isFavorite
+                    }*/
                 )
             }
         }

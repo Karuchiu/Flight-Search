@@ -18,4 +18,13 @@ interface AirportDao {
     )
     fun getByUserInput(searchInput: String): Flow<List<Airport>>
 
+    @Query(
+        """
+            SELECT iata_code FROM airport 
+            WHERE iata_code 
+            NOT IN (:codeToExclude)
+        """
+    )
+    fun getAllCodesExcept(codeToExclude: String): Flow<List<String>>
+
 }
