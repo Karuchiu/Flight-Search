@@ -1,6 +1,7 @@
 package com.flightsearch.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,11 +25,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flightsearch.R
 import com.flightsearch.data.Airport
 import com.flightsearch.data.Favorite
+import com.flightsearch.navigation.NavigationDestination
+import com.flightsearch.ui.FlightSearchViewModel.Companion.factory
+
+object FlightSearchScreens: NavigationDestination{
+    override val route = "flightSearch"
+}
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun FlightSearchApp(
+fun FlightSearchScreens(
     modifier: Modifier = Modifier,
+    onAirportClick: () -> Unit = {},
     viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory)
 ) {
     val focusManager = LocalFocusManager.current
@@ -42,11 +50,7 @@ fun FlightSearchApp(
     val scheduleBySearch by viewModel.getByUserInput(airportSearch).collectAsState(emptyList())
     val favoriteFlights by viewModel.getFavoriteFlights().collectAsState(emptyList())
 
-    Scaffold(
-        topBar = {
 
-        }
-    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -74,32 +78,33 @@ fun FlightSearchApp(
             if (airportSearch.isEmpty()){
                 FavoriteFlightsScreen(favoriteFlights = favoriteFlights)
             }else{
-                AirportDetailsScreen(flightSchedules = scheduleBySearch)
+                AirportDetailsScreen(
+                    flightSchedules = scheduleBySearch,
+                    onAirportClick = onAirportClick
+                )
             }
         }
-        
-
-
-    }
-
 
 }
 
 @Composable
 fun AirportDetailsScreen(
+    modifier: Modifier = Modifier,
     flightSchedules: List<Airport>,
-    modifier: Modifier = Modifier
+    onAirportClick: () -> Unit = {}
 ) {
     AirportDetails(
         airports = flightSchedules,
-        modifier = modifier
+        modifier = modifier,
+        onAirportClick = onAirportClick
     )
 }
 
 @Composable
 fun AirportDetails(
+    modifier: Modifier = Modifier,
     airports: List<Airport>,
-    modifier: Modifier = Modifier
+    onAirportClick: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier,
@@ -112,7 +117,10 @@ fun AirportDetails(
             Row(
                 modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp, horizontal = 16.dp),
+                    .padding(vertical = 16.dp, horizontal = 16.dp)
+                    .clickable {
+                        onAirportClick.invoke()
+                    },
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
