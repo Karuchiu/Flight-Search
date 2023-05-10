@@ -7,11 +7,14 @@ import com.flightsearch.navigation.NavigationDestination
 
 object FlightRoutes : NavigationDestination{
     override val route = "route"
+    const val airportArgument = "airportDestinations"
+    val routeWithArgs ="$route/{$airportArgument}"
 }
 
 @Composable
 fun FlightRoutesScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    airportIataCode: String
 ) {
-        Text(text = "Progress is important!!")
+        Text(text = airportIataCode)
 }

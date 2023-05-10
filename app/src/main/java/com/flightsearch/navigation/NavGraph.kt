@@ -6,9 +6,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.flightsearch.R
 import com.flightsearch.ui.FlightRoutes
 import com.flightsearch.ui.FlightRoutesScreen
@@ -40,7 +42,9 @@ fun FlightNavHost(
         ){
             composable(route = FlightSearchScreens.route){
                 FlightSearchScreens(
-                    onAirportClick = {navController.navigate(FlightRoutes.route)},
+                    onAirportClick = { it ->
+                        navController.navigate("${FlightRoutes.route}/${it}")
+                    },
                     textValue = airportSearch,
                     onValueChange = { it -> airportSearch = it},
                     airports = airportsList,
@@ -49,8 +53,17 @@ fun FlightNavHost(
 
             }
 
-            composable(route = FlightRoutes.route){
-                FlightRoutesScreen()
+            composable(
+                route = FlightRoutes.routeWithArgs,
+                arguments = listOf(navArgument(FlightRoutes.airportArgument){
+                    type = NavType.StringType
+                })
+            ){
+                val airportIataCode = it.arguments?.getString(FlightRoutes.airportArgument)
+                    ?: error("airportArgument cannot be null")
+                FlightRoutesScreen(
+                    airportIataCode = airportIataCode
+                )
             }
         }
     }

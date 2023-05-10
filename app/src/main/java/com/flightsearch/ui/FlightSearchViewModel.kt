@@ -16,8 +16,6 @@ class FlightSearchViewModel(
     private val airPortDao: AirportDao,
     private val favoriteDao: FavoriteDao
 ): ViewModel() {
-    fun getFullSchedule(): Flow<List<Airport>> = airPortDao.getAll()
-
     fun getByUserInput(searchInput: String): Flow<List<Airport>> = airPortDao.getByUserInput(searchInput)
 
     fun getFavoriteFlights(): Flow<List<Favorite>> = favoriteDao.getAllFavorites()

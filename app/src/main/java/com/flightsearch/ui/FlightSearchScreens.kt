@@ -33,7 +33,7 @@ object FlightSearchScreens: NavigationDestination{
 @Composable
 fun FlightSearchScreens(
     modifier: Modifier = Modifier,
-    onAirportClick: () -> Unit = {},
+    onAirportClick: (String) -> Unit = {},
     textValue: String,
     onValueChange: (String) -> Unit,
     airports: List<Airport>,
@@ -81,7 +81,7 @@ fun FlightSearchScreens(
 fun AirportDetailsScreen(
     modifier: Modifier = Modifier,
     airports: List<Airport>,
-    onAirportClick: () -> Unit = {}
+    onAirportClick: (String) -> Unit = {}
 ) {
     AirportDetails(
         airports = airports,
@@ -94,7 +94,7 @@ fun AirportDetailsScreen(
 fun AirportDetails(
     modifier: Modifier = Modifier,
     airports: List<Airport>,
-    onAirportClick: () -> Unit = {}
+    onAirportClick: (String) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier,
@@ -109,7 +109,7 @@ fun AirportDetails(
                     .fillMaxWidth()
                     .padding(vertical = 16.dp, horizontal = 16.dp)
                     .clickable {
-                        onAirportClick.invoke()
+                        onAirportClick.invoke(airport.name)
                     },
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
