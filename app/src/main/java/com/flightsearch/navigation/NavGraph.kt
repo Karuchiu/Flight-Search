@@ -70,10 +70,6 @@ fun FlightNavHost(
                 FlightRoutesScreen(
                     departureCode = departureCode,
                     destinationCodes = destinationCodes,
-                    /*isFavorite = isFavorite,
-                    onFavoriteChange = {
-                        isFavorite = !isFavorite
-                    }*/
                 )
             }
         }

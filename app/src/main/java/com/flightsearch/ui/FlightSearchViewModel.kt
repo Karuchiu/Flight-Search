@@ -3,6 +3,7 @@ package com.flightsearch.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.flightsearch.FlightSearchApplication
@@ -11,6 +12,7 @@ import com.flightsearch.data.AirportDao
 import com.flightsearch.data.Favorite
 import com.flightsearch.data.FavoriteDao
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class FlightSearchViewModel(
     private val airPortDao: AirportDao,
@@ -19,6 +21,18 @@ class FlightSearchViewModel(
     fun getByUserInput(searchInput: String): Flow<List<Airport>> = airPortDao.getByUserInput(searchInput)
 
     fun getFavoriteFlights(): Flow<List<Favorite>> = favoriteDao.getAllFavorites()
+
+    fun addFavoriteFlight(favoriteFlight: Favorite) {
+        viewModelScope.launch {
+            favoriteDao.addFavoriteFlight(favoriteFlight)
+        }
+    }
+
+    fun removeFavoriteFlight(favoriteFlight: Favorite) {
+        viewModelScope.launch {
+            favoriteDao.deleteFavoriteFlight(favoriteFlight)
+        }
+    }
 
     fun routeDestinations(departureCode: String): Flow<List<String>> = airPortDao.getAllCodesExcept(departureCode)
 
