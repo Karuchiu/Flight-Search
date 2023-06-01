@@ -113,10 +113,11 @@ fun FlightRoutesScreen(
                             .padding(16.dp)
                             .clickable(
                                 onClick = {
+                                    val newFavoriteState = !isFavorite
                                     // Update the isFavorite state for this destination code only
-                                    favoriteStates[destinationCode] = !isFavorite
+                                    favoriteStates[destinationCode] = newFavoriteState
 
-                                    if (isFavorite) {
+                                    if (newFavoriteState) {
                                         // Save departureCode and destinationCode to the database
                                         val favoriteFlight = Favorite(
                                             departureCode = departureCode,
@@ -128,7 +129,7 @@ fun FlightRoutesScreen(
 
                                     } else {
                                         // Remove departureCode and destinationCode from the database
-                                        /*val favoriteFlight = Favorite(
+                                        val favoriteFlight = Favorite(
                                             departureCode = departureCode,
                                             destinationCode = destinationCode
                                         )
@@ -138,7 +139,7 @@ fun FlightRoutesScreen(
 
 
                                         // Remove the isFavorite state for this destination code from the map
-                                        favoriteStates.remove(destinationCode)*/
+                                        favoriteStates.remove(destinationCode)
                                     }
                                 }
                             ),
