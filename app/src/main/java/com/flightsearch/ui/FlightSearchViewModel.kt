@@ -34,7 +34,11 @@ class FlightSearchViewModel(
         }
     }
 
-    fun routeDestinations(departureCode: String): Flow<List<String>> = airPortDao.getAllCodesExcept(departureCode)
+    fun routeDestinations(departureCode: String): Flow<List<String>> = airPortDao
+        .getAllCodesExcept(departureCode)
+
+    fun getFavoriteFlight(departureCode: String, destinationCode: String): Flow<Favorite> = favoriteDao
+        .getFavoriteFlight(departureCode, destinationCode)
 
     companion object{
         val factory : ViewModelProvider.Factory = viewModelFactory {

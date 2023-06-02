@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flightsearch.data.Favorite
 import com.flightsearch.navigation.NavigationDestination
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 object FlightRoutes : NavigationDestination{
@@ -129,15 +131,12 @@ fun FlightRoutesScreen(
 
                                     } else {
                                         // Remove departureCode and destinationCode from the database
-                                        val favoriteFlight = Favorite(
-                                            departureCode = departureCode,
-                                            destinationCode = destinationCode
-                                        )
-
-
-                                        viewModel.removeFavoriteFlight(favoriteFlight)
-
-
+                                        coroutineScope.launch {
+                                            viewModel.getFavoriteFlight(departureCode, destinationCode)
+                                                .collect { favoriteFlightToRemove ->
+                                                    viewModel.removeFavoriteFlight(favoriteFlightToRemove)
+                                                }
+                                        }
                                         // Remove the isFavorite state for this destination code from the map
                                         favoriteStates.remove(destinationCode)
                                     }
