@@ -11,12 +11,14 @@ import com.flightsearch.data.Airport
 import com.flightsearch.data.AirportDao
 import com.flightsearch.data.Favorite
 import com.flightsearch.data.FavoriteDao
+import com.flightsearch.data.FavoritePreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class FlightSearchViewModel(
     private val airPortDao: AirportDao,
-    private val favoriteDao: FavoriteDao
+    private val favoriteDao: FavoriteDao,
+    private val favoritePreferencesRepository: FavoritePreferencesRepository
 ): ViewModel() {
     fun getByUserInput(searchInput: String): Flow<List<Airport>> = airPortDao.getByUserInput(searchInput)
 
@@ -40,11 +42,21 @@ class FlightSearchViewModel(
     fun getFavoriteFlight(departureCode: String, destinationCode: String): Flow<Favorite> = favoriteDao
         .getFavoriteFlight(departureCode, destinationCode)
 
+    fun isFavorite(isFavorite: Boolean){
+        viewModelScope.launch {
+            favoritePreferencesRepository.saveFavoritePreferences(isFavorite)
+        }
+    }
+
     companion object{
         val factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as FlightSearchApplication)
-                FlightSearchViewModel(application.database.airportDao(), application.database.favoriteDao())
+                FlightSearchViewModel(
+                    application.database.airportDao(),
+                    application.database.favoriteDao(),
+                    application.favoritePrefencesRepository
+                )
             }
         }
     }
