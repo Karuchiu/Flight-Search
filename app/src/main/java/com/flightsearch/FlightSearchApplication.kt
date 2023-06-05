@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.flightsearch.data.AppDatabase
+import com.flightsearch.data.FavoritePreferencesRepository
 
 private const val FAVORITE_PREFERENCES_NAME = "favorite_preferences"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
