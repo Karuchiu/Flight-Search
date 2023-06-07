@@ -26,12 +26,16 @@ class FlightSearchViewModel(
 
     fun addFavoriteFlight(favoriteFlight: Favorite) {
         viewModelScope.launch {
+            favoritePreferencesRepository.saveFavoritePreferences(true)
+
             favoriteDao.addFavoriteFlight(favoriteFlight)
         }
     }
 
     fun removeFavoriteFlight(favoriteFlight: Favorite) {
         viewModelScope.launch {
+            favoritePreferencesRepository.saveFavoritePreferences(false)
+
             favoriteDao.deleteFavoriteFlight(favoriteFlight)
         }
     }
