@@ -29,9 +29,6 @@ fun FlightNavHost(
         mutableStateOf("")
     }
 
-    /*var isFavorite by remember{
-        mutableStateOf(false)
-    }*/
 
     val fullScheduleTitle = stringResource(id = R.string.full_schedule)
     val airportsList by viewModel.getByUserInput(airportSearch).collectAsState(emptyList())
@@ -70,6 +67,9 @@ fun FlightNavHost(
                 FlightRoutesScreen(
                     departureCode = departureCode,
                     destinationCodes = destinationCodes,
+                    favoriteState = viewModel.favoriteState.collectAsState().value,
+                    setFavorite = viewModel::isFavorite,
+                    flightSearchViewModel = viewModel
                 )
             }
         }
