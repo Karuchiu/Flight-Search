@@ -57,7 +57,7 @@ fun FlightRoutesScreen(
         ) { destinationCode ->
             // Get the isFavorite state for this destination code from the map,
             // or initialize it to false if it doesn't exist yet
-            val isFavoriteState = favoriteStates.getOrDefault(destinationCode, favoriteState.isFavorite)
+            val isFavoriteState = favoriteStates.getOrPut(destinationCode){favoriteState.isFavorite}
             //favoriteStates.getOrPut(destinationCode) { false }
             Card(
                 modifier = modifier.padding(vertical = 10.dp),
