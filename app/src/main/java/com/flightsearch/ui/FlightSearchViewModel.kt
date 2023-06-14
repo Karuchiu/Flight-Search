@@ -42,16 +42,14 @@ class FlightSearchViewModel(
 
     fun addFavoriteFlight(favoriteFlight: Favorite) {
         viewModelScope.launch {
-            favoritePreferencesRepository.saveFavoritePreferences(true)
-
+            //favoritePreferencesRepository.saveFavoritePreferences(true)
             favoriteDao.addFavoriteFlight(favoriteFlight)
         }
     }
 
     fun removeFavoriteFlight(favoriteFlight: Favorite) {
         viewModelScope.launch {
-            favoritePreferencesRepository.saveFavoritePreferences(false)
-
+            //favoritePreferencesRepository.saveFavoritePreferences(false)
             favoriteDao.deleteFavoriteFlight(favoriteFlight)
         }
     }
@@ -84,7 +82,6 @@ class FlightSearchViewModel(
 }
 
 data class FlightFavoriteState(
-    val isFavorite: Boolean = true,
-    val iconColor: Color =
-        if (isFavorite) Color.Yellow else Color.Unspecified
+    val isFavorite: Boolean = false
 )
+
