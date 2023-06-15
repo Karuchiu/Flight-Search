@@ -1,5 +1,7 @@
 package com.flightsearch.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,6 +32,7 @@ object FlightRoutes : NavigationDestination{
     val routeWithArgs ="$route/{$airportArgument}"
 }
 
+@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun FlightRoutesScreen(
     modifier: Modifier = Modifier,
@@ -40,10 +43,10 @@ fun FlightRoutesScreen(
     flightSearchViewModel: FlightSearchViewModel
     //viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory)
 ) {
-    val isFavoriteState = favoriteState.isFavorite
+    //val isFavoriteState = favoriteState.isFavorite
     val coroutineScope = rememberCoroutineScope()
     // Use a map to store the isFavorite state for each destination code
-    val favoriteStates = remember { mutableStateMapOf<String, Boolean>() }
+    val favoriteStates = remember { mutableStateMapOf<String, Boolean>()}
 
     LazyColumn(
         modifier = modifier,
@@ -54,7 +57,7 @@ fun FlightRoutesScreen(
         ) { destinationCode ->
             // Get the isFavorite state for this destination code from the map,
             // or initialize it to false if it doesn't exist yet
-            val isFavorite = favoriteStates.getOrPut(destinationCode) { false }
+            val isFavoriteState = favoriteStates.getOrPut(destinationCode){favoriteState.isFavorite}
             //favoriteStates.getOrPut(destinationCode) { false }
             Card(
                 modifier = modifier.padding(vertical = 10.dp),
@@ -111,81 +114,46 @@ fun FlightRoutesScreen(
 
                     IconButton(
                         onClick = {
-                            setFavorite(!isFavoriteState)
+                            coroutineScope.launch {
+                                val updatedIsFavorite = !isFavoriteState
 
-                            favoriteStates[destinationCode] = isFavoriteState
+                                setFavorite(updatedIsFavorite)
 
-                            if (isFavoriteState) {
-                                // Save departureCode and destinationCode to the database
-                                val favoriteFlight = Favorite(
-                                    departureCode = departureCode,
-                                    destinationCode = destinationCode
-                                )
+                                favoriteStates[destinationCode] = updatedIsFavorite
 
-                                flightSearchViewModel.addFavoriteFlight(favoriteFlight)
-                            } else {
-                                // Remove departureCode and destinationCode from the database
-                                coroutineScope.launch {
+                                if (updatedIsFavorite) {
+                                    // Save departureCode and destinationCode to the database
+
+                                    val favoriteFlight = Favorite(
+                                        departureCode = departureCode,
+                                        destinationCode = destinationCode
+                                    )
+
+                                    flightSearchViewModel.addFavoriteFlight(favoriteFlight)
+
+                                } else {
+                                    // Remove departureCode and destinationCode from the database
+                                    //coroutineScope.launch {
                                     flightSearchViewModel
-                                    .getFavoriteFlight(departureCode, destinationCode)
-                                    .collect { favoriteFlightToRemove ->
-                                        flightSearchViewModel.removeFavoriteFlight(
-                                            favoriteFlightToRemove
-                                        )
-                                    }
+                                        .getFavoriteFlight(departureCode, destinationCode)
+                                        .collect { favoriteFlightToRemove ->
+                                            flightSearchViewModel.removeFavoriteFlight(
+                                                favoriteFlightToRemove
+                                            )
+                                        }
+                                    //}
+                                    // Remove the isFavorite state for this destination code from the map
+                                    favoriteStates.remove(destinationCode)
                                 }
-                                // Remove the isFavorite state for this destination code from the map
-                                favoriteStates.remove(destinationCode)
                             }
                         }
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Star,
                             contentDescription = null,
-                            tint = favoriteState.iconColor
+                            tint = if (isFavoriteState) Color.Yellow else Color.Unspecified
                         )
                     }
-
-                    /*Icon(
-                        Icons.Outlined.Star,
-                        contentDescription = "Add to Favorite Flights",
-                        modifier = modifier
-                            .padding(16.dp)
-                            .clickable(
-                                onClick = {
-
-                                    val newFavoriteState = !isFavorite
-                                    // Update the isFavorite state for this destination code only
-                                    favoriteStates[destinationCode] = newFavoriteState
-
-                                    if (newFavoriteState) {
-                                        // Save departureCode and destinationCode to the database
-                                        val favoriteFlight = Favorite(
-                                            departureCode = departureCode,
-                                            destinationCode = destinationCode
-                                        )
-
-                                        //viewModel.addFavoriteFlight(favoriteFlight)
-
-
-                                    } else {
-                                        // Remove departureCode and destinationCode from the database
-                                        coroutineScope.launch {
-                                           *//* viewModel
-                                                .getFavoriteFlight(departureCode, destinationCode)
-                                                .collect { favoriteFlightToRemove ->
-                                                    viewModel.removeFavoriteFlight(
-                                                        favoriteFlightToRemove
-                                                    )
-                                                }*//*
-                                        }
-                                        // Remove the isFavorite state for this destination code from the map
-                                        favoriteStates.remove(destinationCode)
-                                    }
-                                }
-                            ),
-                        tint = if (isFavorite) Color.Yellow else Color.Unspecified
-                    )*/
                 }
             }
         }
