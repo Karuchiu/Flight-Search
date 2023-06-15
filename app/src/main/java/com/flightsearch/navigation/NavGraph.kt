@@ -12,7 +12,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.flightsearch.R
-import com.flightsearch.data.Favorite
 import com.flightsearch.ui.FlightRoutes
 import com.flightsearch.ui.FlightRoutesScreen
 import com.flightsearch.ui.FlightSearchScreens

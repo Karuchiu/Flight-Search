@@ -8,9 +8,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.flightsearch.FlightSearchApplication
-import com.flightsearch.data.Airport
+import com.flightsearch.models.Airport
 import com.flightsearch.data.AirportDao
-import com.flightsearch.data.Favorite
+import com.flightsearch.models.Favorite
 import com.flightsearch.data.FavoriteDao
 import com.flightsearch.data.FavoritePreferencesRepository
 import kotlinx.coroutines.flow.Flow

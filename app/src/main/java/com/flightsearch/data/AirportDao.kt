@@ -2,6 +2,7 @@ package com.flightsearch.data
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.flightsearch.models.Airport
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -1,4 +1,4 @@
-package com.flightsearch.data
+package com.flightsearch.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -8,10 +8,10 @@ import androidx.room.PrimaryKey
 data class Airport(
     @PrimaryKey
     val id: Int,
-    @ColumnInfo(name = "iata_code")
+    @ColumnInfo("iata_code")
     val iataCode: String,
-    @ColumnInfo(name = "name")
+    @ColumnInfo("name")
     val name: String,
-    @ColumnInfo(name = "passengers")
+    @ColumnInfo("passengers")
     val passengers: Int
 )

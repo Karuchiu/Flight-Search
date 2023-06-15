@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.flightsearch.models.Airport
+import com.flightsearch.models.Favorite
 
 @Database(entities = [Airport::class, Favorite::class], version = 1)
 abstract class AppDatabase: RoomDatabase() {

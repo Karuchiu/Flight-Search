@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.flightsearch.R
-import com.flightsearch.data.Airport
-import com.flightsearch.data.Favorite
+import com.flightsearch.models.Airport
+import com.flightsearch.models.Favorite
 import com.flightsearch.navigation.NavigationDestination
 
 object FlightSearchScreens: NavigationDestination{

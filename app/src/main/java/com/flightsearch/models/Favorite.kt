@@ -1,4 +1,4 @@
-package com.flightsearch.data
+package com.flightsearch.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 data class Favorite(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    @ColumnInfo(name = "departure_code")
+    @ColumnInfo("departure_code")
     val departureCode: String,
-    @ColumnInfo(name = "destination_code")
+    @ColumnInfo("destination_code")
     val destinationCode: String
 )
