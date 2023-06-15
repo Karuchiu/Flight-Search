@@ -10,8 +10,6 @@ import com.flightsearch.models.Favorite
 @Database(entities = [Airport::class, Favorite::class], version = 1)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun flightDao(): FlightDao
-    abstract fun airportDao(): AirportDao
-    abstract fun favoriteDao(): FavoriteDao
 
     companion object{
         @Volatile
