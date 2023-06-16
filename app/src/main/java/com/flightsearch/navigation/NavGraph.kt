@@ -18,7 +18,7 @@ import com.flightsearch.ui.FlightSearchScreens
 import com.flightsearch.ui.FlightSearchViewModel
 
 @Composable
-fun FlightNavHost(
+fun FlightApp(
     modifier: Modifier = Modifier,
     viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory)
 ) {
