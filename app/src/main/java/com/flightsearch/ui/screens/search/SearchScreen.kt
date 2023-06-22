@@ -1,6 +1,7 @@
 package com.flightsearch.ui.screens.search
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -36,7 +37,17 @@ fun SearchScreen(
 
             if(favoriteList.isNotEmpty()){
 
+            }else{
+                Text(text= "No favorites yet")
             }
+        } else {
+
+            val airports = uiState.airportList
+
+            SearchResults(
+                airports = airports,
+                onSelectCode = onSelectCode
+            )
         }
     }
 }

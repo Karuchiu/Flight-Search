@@ -16,33 +16,24 @@ import com.flightsearch.ui.FlightRoutes
 import com.flightsearch.ui.FlightRoutesScreen
 import com.flightsearch.ui.FlightSearchScreens
 import com.flightsearch.ui.FlightSearchViewModel
+import com.flightsearch.ui.screens.search.SearchDestination
+import com.flightsearch.ui.screens.search.SearchScreen
 
 @Composable
-fun FlightApp(
-    modifier: Modifier = Modifier,
-    viewModel: FlightSearchViewModel = viewModel(factory = FlightSearchViewModel.factory)
-) {
+fun FlightApp() {
     val navController = rememberNavController()
 
-    var airportSearch by remember{
-        mutableStateOf("")
-    }
-
-
-    val fullScheduleTitle = stringResource(id = R.string.full_schedule)
-    val airportsList by viewModel.getByUserInput(airportSearch).collectAsState(emptyList())
-    val favoriteFlights by viewModel.getFavoriteFlights().collectAsState(emptyList())
-    
-    Scaffold(
-        topBar = {}
-    ) {
+    Scaffold() {
         NavHost(
             navController = navController,
-            modifier = modifier.padding(it),
-            startDestination = FlightSearchScreens.route
+            modifier = Modifier.padding(it),
+            startDestination = SearchDestination.route
         ){
-            composable(route = FlightSearchScreens.route){
-                FlightSearchScreens(
+            composable(route = SearchDestination.route){
+                SearchScreen(
+                    onSelectCode = {
+                        navController.navigate("")
+                    },
                     onAirportClick = { it ->
                         navController.navigate("${FlightRoutes.route}/${it}")
                     },
