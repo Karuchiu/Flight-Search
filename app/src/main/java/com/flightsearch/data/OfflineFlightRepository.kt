@@ -13,8 +13,8 @@ class OfflineFlightRepository(private val flightDao: FlightDao): FlightRepositor
         return flightDao.getAirportsByInput(query)
     }
 
-    override fun getAllCodesExcept(code: String): Flow<List<String>> {
-        return flightDao.getAllCodesExcept(code)
+    override fun getAllAirportsByCode(code: String): Flow<List<Airport>> {
+        return flightDao.getAllAirportsByCode(code)
     }
 
     override fun getAirportByCodeFlow(code: String): Flow<Airport> {

@@ -10,7 +10,7 @@ interface FlightRepository {
 
     fun getAirportsByInput(query: String): Flow<List<Airport>>
 
-    fun getAllCodesExcept(code: String): Flow<List<String>>
+    fun getAllAirportsByCode(code: String): Flow<List<Airport>>
 
     fun getAirportByCodeFlow(code: String): Flow<Airport>
 
