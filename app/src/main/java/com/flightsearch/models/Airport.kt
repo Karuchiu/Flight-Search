@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Airport")
 data class Airport(
     @PrimaryKey
-    val id: Int,
+    val id: Int = 0,
     @ColumnInfo("iata_code")
-    val iataCode: String,
+    val iataCode: String = "",
     @ColumnInfo("name")
-    val name: String,
+    val name: String = "",
     @ColumnInfo("passengers")
-    val passengers: Int
+    val passengers: Int = 0
 )
