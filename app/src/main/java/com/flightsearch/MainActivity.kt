@@ -8,7 +8,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.flightsearch.navigation.FlightApp
-import com.flightsearch.ui.FlightSearchScreens
 import com.flightsearch.ui.theme.FlightSearchTheme
 
 class MainActivity : ComponentActivity() {

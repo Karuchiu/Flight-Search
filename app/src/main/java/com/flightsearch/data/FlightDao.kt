@@ -1,5 +1,6 @@
 package com.flightsearch.data
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -8,6 +9,7 @@ import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface FlightDao {
 
     /**
@@ -54,7 +56,7 @@ interface FlightDao {
         WHERE departure_code = :departureCode
         AND destination_code = :destinationCode
     """)
-    fun getSingleFavorite(departureCode: String, destinationCode: String):Flow<Favorite>
+    fun getSingleFavorite(departureCode: String, destinationCode: String):Favorite
 
     //@Insert(onConflict = OnConflictStrategy.IGNORE)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
