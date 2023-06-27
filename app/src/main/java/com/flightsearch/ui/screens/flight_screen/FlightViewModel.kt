@@ -1,8 +1,10 @@
 package com.flightsearch.ui.screens.flight_screen
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -31,9 +33,9 @@ class FlightViewModel(
 
     var flightAdded: Boolean by mutableStateOf(false)
 
-    private var favoriteFlights = mutableListOf<Favorite>()
-    private var allAirports = mutableListOf<Airport>()
-    private var destinationAirports = mutableListOf<Airport>()
+    private var favoriteFlights = mutableStateListOf<Favorite>()
+    private var allAirports = mutableStateListOf<Airport>()
+    private var destinationAirports = mutableStateListOf<Airport>()
 
     init {
         viewModelScope.launch {
@@ -54,6 +56,7 @@ class FlightViewModel(
                 allAirports.addAll(it)
             }
 
+            val aa = flightRepository.getAllAirports()
             flightRepository.getAllAirportsByCode(airportCode).collect{
                 destinationAirports.clear()
                 destinationAirports.addAll(it)
