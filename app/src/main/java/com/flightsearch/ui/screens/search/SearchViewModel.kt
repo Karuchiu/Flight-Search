@@ -33,6 +33,9 @@ class SearchViewModel(
 
     private var getAirportsJob: Job? = null
 
+    private var getAllAirportJob: Job? = null
+    private var getAllFavoritesJob: Job? = null
+
     private var airportList = mutableListOf<Airport>()
     private var favoriteList = mutableListOf<Favorite>()
 
@@ -49,20 +52,43 @@ class SearchViewModel(
 
         if (query.isEmpty()){
             viewModelScope.launch {
-                flightRepository.getAllAirports().collect { airports ->
+                /*flightRepository.getAllAirports().collect { airports ->
                     airportList.clear()
                     airportList.addAll(airports)
-                }
-                flightRepository.getAllFavorites().collect(){
+                }*/
+                getAllAirportJob?.cancel()
+
+                getAllAirportJob = flightRepository.getAllAirports()
+                    .onEach { list ->
+                        _uiState.update {
+                            uiState.value.copy(
+                                airportList = list
+                            )
+                        }
+                    }.launchIn(viewModelScope)
+
+                /*flightRepository.getAllFavorites().collect(){
                     favoriteList.clear()
                     favoriteList.addAll(it)
-                }
-                _uiState.update {
+                }*/
+
+                getAllFavoritesJob?.cancel()
+
+                getAllFavoritesJob = flightRepository.getAllFavorites()
+                    .onEach { list ->
+                        _uiState.update {
+                            uiState.value.copy(
+                                favoriteList = list
+                            )
+                        }
+                    }.launchIn(viewModelScope)
+
+                /*_uiState.update {
                     _uiState.value.copy(
                         airportList = airportList,
                         favoriteList = favoriteList
                     )
-                }
+                }*/
             }
         } else {
             getAirportsJob?.cancel()
@@ -71,7 +97,7 @@ class SearchViewModel(
             //on each emission
                 .onEach {result ->
                     _uiState.update {
-                        _uiState.value.copy(
+                        uiState.value.copy(
                             airportList = result
                         )
                     }

@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,9 +15,11 @@ import com.flightsearch.FlightSearchApplication
 import com.flightsearch.data.FlightRepository
 import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -33,6 +34,8 @@ class FlightViewModel(
 
     var flightAdded: Boolean by mutableStateOf(false)
 
+    private var getFavoriteJob: Job? = null
+
     private var favoriteFlights = mutableStateListOf<Favorite>()
     private var allAirports = mutableStateListOf<Airport>()
     private var destinationAirports = mutableStateListOf<Airport>()
@@ -46,10 +49,21 @@ class FlightViewModel(
     private fun processFlightList(airportCode: String) {
 
         viewModelScope.launch {
-            flightRepository.getAllFavorites().collect{
+           /* flightRepository.getAllFavorites().collect{
                 favoriteFlights.clear()
                 favoriteFlights.addAll(it)
-            }
+            }*/
+
+            getFavoriteJob?.cancel()
+
+            getFavoriteJob = flightRepository.getAllFavorites()
+                .onEach { list ->
+                    _uiState.update {
+                        _uiState.value.copy(
+                            favoriteList = list
+                        )
+                    }
+                }.launchIn(viewModelScope)
 
             flightRepository.getAllAirports().collect{
                 allAirports.clear()
@@ -66,7 +80,7 @@ class FlightViewModel(
             _uiState.update{
                 it.copy(
                     code = airportCode,
-                    favoriteList = favoriteFlights,
+                    favoriteList = it.favoriteList,
                     destinationList = destinationAirports,
                     departureAirport = departureAirport
                 )
