@@ -36,10 +36,6 @@ class FlightViewModel(
 
     private var getFavoriteJob: Job? = null
 
-    private var favoriteFlights = mutableStateListOf<Favorite>()
-    private var allAirports = mutableStateListOf<Airport>()
-    private var destinationAirports = mutableStateListOf<Airport>()
-
     init {
         viewModelScope.launch {
             processFlightList(airportCode)
@@ -49,39 +45,33 @@ class FlightViewModel(
     private fun processFlightList(airportCode: String) {
 
         viewModelScope.launch {
-           /* flightRepository.getAllFavorites().collect{
-                favoriteFlights.clear()
-                favoriteFlights.addAll(it)
-            }*/
-
             getFavoriteJob?.cancel()
 
-            getFavoriteJob = flightRepository.getAllFavorites()
-                .onEach { list ->
-                    _uiState.update {
+            flightRepository.getAllFavorites()
+                .collect { list ->
                         _uiState.value.copy(
                             favoriteList = list
                         )
-                    }
-                }.launchIn(viewModelScope)
 
-            flightRepository.getAllAirports().collect{
-                allAirports.clear()
-                allAirports.addAll(it)
-            }
+                }
 
-            val aa = flightRepository.getAllAirports()
-            flightRepository.getAllAirportsByCode(airportCode).collect{
-                destinationAirports.clear()
-                destinationAirports.addAll(it)
-            }
+            val allAirports = flightRepository.getAllAirports()
+
+            flightRepository.getAllAirportsByCode(airportCode)
+                .collect { list ->
+
+                        _uiState.value.copy(
+                            destinationList = list
+                        )
+
+                }
 
             val departureAirport = allAirports.first {it.iataCode == airportCode}
             _uiState.update{
                 it.copy(
                     code = airportCode,
                     favoriteList = it.favoriteList,
-                    destinationList = destinationAirports,
+                    destinationList = it.destinationList,
                     departureAirport = departureAirport
                 )
             }
@@ -104,17 +94,14 @@ class FlightViewModel(
                 flightRepository.deleteFavoriteFlight(favorite)
             }
 
-            // Cheating, I am forcing a Recomposition
-            // I should be using Flow but am not sure how to atm
-            flightRepository.getAllFavorites().collect{
-                favoriteFlights.clear()
-                favoriteFlights.addAll(it)
-            }
-            _uiState.update {
-                uiState.value.copy(
-                    favoriteList = favoriteFlights,
-                )
-            }
+            flightRepository.getAllFavorites()
+                .collect { list ->
+                    _uiState.update {
+                        _uiState.value.copy(
+                            favoriteList = list
+                        )
+                    }
+                }
         }
     }
 

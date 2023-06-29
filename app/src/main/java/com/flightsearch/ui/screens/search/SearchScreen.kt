@@ -18,11 +18,11 @@ fun SearchScreen(
     onSelectCode: (String) -> Unit
 ) {
     val viewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory)
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsState()
 
     Column(modifier = modifier) {
         SearchTextField(
-            query = uiState.searchQuery,
+            query = uiState.value.searchQuery,
             onQueryChange = {
                 viewModel.updateQuery(it)
                 viewModel.updateSelectedCode("")
@@ -30,10 +30,10 @@ fun SearchScreen(
             }
         )
 
-        if(uiState.searchQuery.isEmpty()){
+        if(uiState.value.searchQuery.isEmpty()){
 
-            val favoriteList = uiState.favoriteList
-            val airportList = uiState.airportList
+            val favoriteList = uiState.value.favoriteList
+            val airportList = uiState.value.airportList
 
             if(favoriteList.isNotEmpty()){
 
@@ -42,7 +42,7 @@ fun SearchScreen(
             }
         } else {
 
-            val airports = uiState.airportList
+            val airports = uiState.value.airportList
 
             SearchResults(
                 airports = airports,

@@ -52,43 +52,15 @@ class SearchViewModel(
 
         if (query.isEmpty()){
             viewModelScope.launch {
-                /*flightRepository.getAllAirports().collect { airports ->
-                    airportList.clear()
-                    airportList.addAll(airports)
-                }*/
-                getAllAirportJob?.cancel()
 
-                getAllAirportJob = flightRepository.getAllAirports()
-                    .onEach { list ->
-                        _uiState.update {
-                            uiState.value.copy(
-                                airportList = list
-                            )
-                        }
-                    }.launchIn(viewModelScope)
-
-                /*flightRepository.getAllFavorites().collect(){
-                    favoriteList.clear()
-                    favoriteList.addAll(it)
-                }*/
-
-                getAllFavoritesJob?.cancel()
-
-                getAllFavoritesJob = flightRepository.getAllFavorites()
-                    .onEach { list ->
-                        _uiState.update {
-                            uiState.value.copy(
-                                favoriteList = list
-                            )
-                        }
-                    }.launchIn(viewModelScope)
-
-                /*_uiState.update {
-                    _uiState.value.copy(
+                airportList = flightRepository.getAllAirports().toMutableStateList()
+               // TODO favoriteList= flightRepository.getAllFavoritesFlights().toMutableStateList()
+                _uiState.update {
+                    uiState.value.copy(
                         airportList = airportList,
                         favoriteList = favoriteList
                     )
-                }*/
+                }
             }
         } else {
             getAirportsJob?.cancel()

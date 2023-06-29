@@ -16,12 +16,13 @@ interface FlightDao {
     Airport
      **/
     @Query(" SELECT * FROM airport ")
-    fun getAllAirports(): Flow<List<Airport>>
+    fun getAllAirports(): List<Airport>
 
     @Query(
         """
             SELECT * FROM airport
             WHERE name LIKE '%' || :searchInput || '%' OR iata_code LIKE '%' || :searchInput || '%'
+            ORDER BY name ASC
         """
     )
     fun getAirportsByInput(searchInput: String): Flow<List<Airport>>

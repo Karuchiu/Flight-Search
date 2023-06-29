@@ -5,7 +5,7 @@ import com.flightsearch.models.Favorite
 import kotlinx.coroutines.flow.Flow
 
 class OfflineFlightRepository(private val flightDao: FlightDao): FlightRepository {
-    override fun getAllAirports(): Flow<List<Airport>> {
+    override fun getAllAirports(): List<Airport> {
         return flightDao.getAllAirports()
     }
 

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FlightRepository {
 
-    fun getAllAirports(): Flow<List<Airport>>
+    fun getAllAirports(): List<Airport>
 
     fun getAirportsByInput(query: String): Flow<List<Airport>>
 
