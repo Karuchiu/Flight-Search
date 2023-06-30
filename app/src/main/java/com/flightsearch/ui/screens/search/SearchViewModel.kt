@@ -54,11 +54,14 @@ class SearchViewModel(
             viewModelScope.launch {
 
                 airportList = flightRepository.getAllAirports().toMutableStateList()
-               // TODO favoriteList= flightRepository.getAllFavoritesFlights().toMutableStateList()
+                flightRepository.getAllFavorites().collect{
+                    _uiState.value.copy(
+                        favoriteList = it
+                    )
+                }
                 _uiState.update {
                     uiState.value.copy(
-                        airportList = airportList,
-                        favoriteList = favoriteList
+                        airportList = airportList
                     )
                 }
             }
