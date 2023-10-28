@@ -1,6 +1,7 @@
 package com.flightsearch.ui.screens.search
 
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,7 @@ import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
@@ -36,8 +38,9 @@ class SearchViewModel(
     private var getAllAirportJob: Job? = null
     private var getAllFavoritesJob: Job? = null
 
-    private var airportList = mutableListOf<Airport>()
-    private var favoriteList = mutableListOf<Favorite>()
+ /*   private val _airportList = MutableStateFlow<List<Airport>>(emptyList())
+    private val _favoriteList = MutableStateFlow<List<Favorite>>(emptyList())*/
+
 
     init {
         viewModelScope.launch {
@@ -52,43 +55,8 @@ class SearchViewModel(
 
         if (query.isEmpty()){
             viewModelScope.launch {
-                /*flightRepository.getAllAirports().collect { airports ->
-                    airportList.clear()
-                    airportList.addAll(airports)
-                }*/
-                getAllAirportJob?.cancel()
-
-                getAllAirportJob = flightRepository.getAllAirports()
-                    .onEach { list ->
-                        _uiState.update {
-                            uiState.value.copy(
-                                airportList = list
-                            )
-                        }
-                    }.launchIn(viewModelScope)
-
-                /*flightRepository.getAllFavorites().collect(){
-                    favoriteList.clear()
-                    favoriteList.addAll(it)
-                }*/
-
-                getAllFavoritesJob?.cancel()
-
-                getAllFavoritesJob = flightRepository.getAllFavorites()
-                    .onEach { list ->
-                        _uiState.update {
-                            uiState.value.copy(
-                                favoriteList = list
-                            )
-                        }
-                    }.launchIn(viewModelScope)
-
-                /*_uiState.update {
-                    _uiState.value.copy(
-                        airportList = airportList,
-                        favoriteList = favoriteList
-                    )
-                }*/
+                refreshAirportList()
+                refreshFavoriteList()
             }
         } else {
             getAirportsJob?.cancel()
@@ -102,6 +70,22 @@ class SearchViewModel(
                         )
                     }
                 }.launchIn(viewModelScope)
+        }
+    }
+
+    private fun refreshAirportList() {
+        viewModelScope.launch {
+            flightRepository.getAllAirports().collect { airports ->
+                _uiState.value = _uiState.value.copy(airportList = airports)
+            }
+        }
+    }
+
+    private fun refreshFavoriteList() {
+        viewModelScope.launch {
+            flightRepository.getAllFavorites().collect { favorites ->
+                _uiState.value = _uiState.value.copy(favoriteList = favorites)
+            }
         }
     }
 

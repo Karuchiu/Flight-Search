@@ -7,7 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.flightsearch.data.MockData
 import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
 
@@ -36,10 +38,23 @@ fun FlightResults(
                     departureAirportCode = departureAirport.iataCode,
                     departureAirportName = departureAirport.name,
                     destinationAirportCode = item.iataCode,
-                    destinationAirportName = item.name  ,
+                    destinationAirportName = item.name,
                     onFavoriteClick = onFavoriteClick
                 )
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun FlightResultsPreview() {
+    val mockData = MockData.airports
+
+    FlightResults(
+        departureAirport = mockData[0],
+        destinationList = mockData,
+        favoriteList = emptyList(),
+        onFavoriteClick = { _: String, _: String -> }
+    )
 }

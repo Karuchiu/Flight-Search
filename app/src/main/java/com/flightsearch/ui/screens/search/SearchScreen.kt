@@ -15,7 +15,7 @@ object SearchDestination: NavigationDestination {
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    onSelectCode: (String) -> Unit
+    onSelectCode: (String) -> Unit,
 ) {
     val viewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory)
     val uiState = viewModel.uiState.collectAsState().value
