@@ -35,13 +35,6 @@ class SearchViewModel(
 
     private var getAirportsJob: Job? = null
 
-    private var getAllAirportJob: Job? = null
-    private var getAllFavoritesJob: Job? = null
-
- /*   private val _airportList = MutableStateFlow<List<Airport>>(emptyList())
-    private val _favoriteList = MutableStateFlow<List<Favorite>>(emptyList())*/
-
-
     init {
         viewModelScope.launch {
             favoritePreferencesRepository.userPreferencesFlow.collect{

@@ -17,15 +17,15 @@ object FlightScreenDestination: NavigationDestination{
 @Composable
 fun FlightScreen() {
     val viewModel: FlightViewModel = viewModel(factory = FlightViewModel.Factory)
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsState().value
 
     val context = LocalContext.current
 
     Column {
         FlightResults(
-            departureAirport = uiState.value.departureAirport,
-            destinationList = uiState.value.destinationList,
-            favoriteList = uiState.value.favoriteList,
+            departureAirport = uiState.departureAirport,
+            destinationList = uiState.destinationList,
+            favoriteList = uiState.favoriteList,
             onFavoriteClick = { s1: String, s2: String ->
                 viewModel.addFavoriteFlight(s1, s2)
                 if (viewModel.flightAdded){

@@ -1,5 +1,6 @@
 package com.flightsearch.ui.screens.search
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,8 @@ fun SearchScreen(
 ) {
     val viewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory)
     val uiState = viewModel.uiState.collectAsState().value
+    val airports = uiState.airportList
+    Log.d("Composable", "Rendering FlightResults with ${airports.size}")
 
     Column(modifier = modifier) {
         SearchTextField(
@@ -33,7 +36,7 @@ fun SearchScreen(
         if(uiState.searchQuery.isEmpty()){
 
             val favoriteList = uiState.favoriteList
-            val airportList = uiState.airportList
+            //val airportList = uiState.airportList
 
             if(favoriteList.isNotEmpty()){
 
@@ -42,7 +45,7 @@ fun SearchScreen(
             }
         } else {
 
-            val airports = uiState.airportList
+            //val airports = uiState.airportList
 
             SearchResults(
                 airports = airports,

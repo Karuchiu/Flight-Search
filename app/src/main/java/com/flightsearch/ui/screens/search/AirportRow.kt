@@ -21,11 +21,13 @@ fun AirportRow(
 ) {
     Row(
         modifier = modifier
-            .clickable {
-                if (code != ""){
-                    onSelectCode(code)
-                 }
-            },
+            .clickable(
+                onClick = {
+                    if (code != "") {
+                        onSelectCode(code)
+                    }
+                },
+            )
         //horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Spacer(

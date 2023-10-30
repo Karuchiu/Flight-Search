@@ -1,7 +1,7 @@
 package com.flightsearch.ui.screens.flight_screen
 
+import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
@@ -13,14 +13,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.flightsearch.FlightSearchApplication
 import com.flightsearch.data.FlightRepository
-import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class FlightViewModel(
@@ -28,42 +22,46 @@ class FlightViewModel(
     val flightRepository: FlightRepository
 ): ViewModel() {
     private val _uiState = MutableStateFlow(FlightUiState())
-    val uiState: StateFlow<FlightUiState> = _uiState
+    val uiState = _uiState.asStateFlow()
 
     private val airportCode: String = savedStateHandle[FlightScreenDestination.codeArg] ?: ""
 
     var flightAdded: Boolean by mutableStateOf(false)
 
-    private var getFavoriteJob: Job? = null
-
-    //private var favoriteFlights = mutableStateListOf<Favorite>()
-    //private var allAirports = mutableStateListOf<Airport>()
-    //private var destinationAirports = mutableStateListOf<Airport>()
+    //private var getFavoriteJob: Job? = null
 
     init {
+        Log.d("FlightVM", "Before collecting airports")
         viewModelScope.launch {
             processFlightList(airportCode)
         }
+        Log.d("FlightVM", "After collecting airports")
     }
 
     private fun processFlightList(airportCode: String) {
+        _uiState.update { it.copy(code = airportCode) }
 
         viewModelScope.launch {
-            flightRepository.getAllFavorites().collect{
-                _uiState.value = _uiState.value.copy(favoriteList = it)
-            }
+            val favoritesFlow = flightRepository.getAllFavorites()
+            val airportsFlow = flightRepository.getAllAirports()
 
-            flightRepository.getAllAirports().collect{
-                _uiState.value = _uiState.value.copy(destinationList = it)
-            }
+            combine(favoritesFlow, airportsFlow) { favorites, airports ->
+                Log.d("FlightVM", "Favs collected: $favorites")
+                Log.d("FlightVM", "Airports collected: ${airports.size}")
 
-            val departureAirport = _uiState.value.destinationList.firstOrNull { it.iataCode == airportCode }
-            _uiState.update{
-                it.copy(
-                    code = airportCode,
-                    departureAirport = departureAirport ?: Airport()
+                // Now you can update your UI state with both favorites and airports data
+                _uiState.value = uiState.value.copy(
+                    favoriteList = favorites,
+                    destinationList = airports
                 )
-            }
+
+                val departureAirport = airports.first { it.iataCode == airportCode }
+                _uiState.update {
+                    it.copy(
+                        departureAirport = departureAirport
+                    )
+                }
+            }.collect()
         }
     }
 
@@ -71,17 +69,8 @@ class FlightViewModel(
         viewModelScope.launch {
             val favorite: Favorite = flightRepository.getSingleFavorite(departureCode, destinationCode)
 
-            if (favorite == null){
-                val tmp = Favorite(
-                    departureCode = departureCode,
-                    destinationCode = destinationCode
-                )
-                flightAdded = true
-                flightRepository.insertFavoriteFlight(tmp)
-            }else{
-                flightAdded = false
-                flightRepository.deleteFavoriteFlight(favorite)
-            }
+            flightAdded = false
+            flightRepository.deleteFavoriteFlight(favorite)
 
             // Cheating, I am forcing a Recomposition
             // I should be using Flow but am not sure how to atm
