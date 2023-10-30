@@ -43,12 +43,8 @@ class FlightViewModel(
 
         viewModelScope.launch {
             val favoritesFlow = flightRepository.getAllFavorites()
-            val airportsFlow = flightRepository.getAllAirports()
+            val airportsFlow = flightRepository.getAllAirportsByCode(airportCode)
             val departureAirport = flightRepository.getAirportByCodeFlow(airportCode)
-            /**
-             * Using getAllAirportsByCode causes the app to crash
-             * However, this is the required code to omit the departureAirport
-             * */
 
             combine(favoritesFlow, airportsFlow, departureAirport) {
                     favorites, airports, departurePort->
