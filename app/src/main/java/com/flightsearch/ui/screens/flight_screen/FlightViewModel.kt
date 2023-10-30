@@ -44,23 +44,23 @@ class FlightViewModel(
         viewModelScope.launch {
             val favoritesFlow = flightRepository.getAllFavorites()
             val airportsFlow = flightRepository.getAllAirports()
+            val departureAirport = flightRepository.getAirportByCodeFlow(airportCode)
+            /**
+             * Using getAllAirportsByCode causes the app to crash
+             * However, this is the required code to omit the departureAirport
+             * */
 
-            combine(favoritesFlow, airportsFlow) { favorites, airports ->
+            combine(favoritesFlow, airportsFlow, departureAirport) {
+                    favorites, airports, departurePort->
                 Log.d("FlightVM", "Favs collected: $favorites")
                 Log.d("FlightVM", "Airports collected: ${airports.size}")
 
                 // Now you can update your UI state with both favorites and airports data
                 _uiState.value = uiState.value.copy(
                     favoriteList = favorites,
-                    destinationList = airports
+                    destinationList = airports,
+                    departureAirport = departurePort
                 )
-
-                val departureAirport = airports.first { it.iataCode == airportCode }
-                _uiState.update {
-                    it.copy(
-                        departureAirport = departureAirport
-                    )
-                }
             }.collect()
         }
     }
