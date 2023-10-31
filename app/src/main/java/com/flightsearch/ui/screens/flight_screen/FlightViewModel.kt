@@ -63,15 +63,24 @@ class FlightViewModel(
 
     fun addFavoriteFlight(departureCode: String, destinationCode: String){
         viewModelScope.launch {
-            val favorite: Favorite = flightRepository.getSingleFavorite(departureCode, destinationCode)
+            val favoriteFlow: Flow<Favorite> = flightRepository.getSingleFavorite(departureCode, destinationCode)
 
-            flightAdded = false
-            flightRepository.deleteFavoriteFlight(favorite)
+            favoriteFlow.collect{ favorite ->
+                if(favorite != null){
+                    flightAdded = false
+                    flightRepository.deleteFavoriteFlight(favorite)
+                } else {
+                    flightAdded = true
+                    val newFavorite = Favorite(
+                        departureCode = departureCode,
+                        destinationCode = destinationCode
+                    )
+                    flightRepository.insertFavoriteFlight(newFavorite)
+                }
 
-            // Cheating, I am forcing a Recomposition
-            // I should be using Flow but am not sure how to atm
-            flightRepository.getAllFavorites().collect{
-                _uiState.value = _uiState.value.copy(favoriteList = it)
+                flightRepository.getAllFavorites().collect{
+                    _uiState.value = uiState.value.copy(favoriteList = it)
+                }
             }
 
         }

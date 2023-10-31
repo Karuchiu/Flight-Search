@@ -25,7 +25,7 @@ class OfflineFlightRepository(private val flightDao: FlightDao): FlightRepositor
         return flightDao.getAllFavorites()
     }
 
-    override fun getSingleFavorite(departureCode: String, destinationCode: String): Favorite {
+    override fun getSingleFavorite(departureCode: String, destinationCode: String): Flow<Favorite> {
         return flightDao.getSingleFavorite(departureCode,destinationCode)
     }
 
