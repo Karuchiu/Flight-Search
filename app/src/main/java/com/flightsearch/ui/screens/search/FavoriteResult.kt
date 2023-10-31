@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
+import com.flightsearch.ui.screens.flight_screen.FlightRow
 
 @Composable
 fun FavoriteResult(
@@ -26,6 +27,18 @@ fun FavoriteResult(
                 val departAirport = airportList.first{
                     it.iataCode == item.departureCode
                 }
+                val destinationAirport = airportList.first{
+                    it.iataCode == item.destinationCode
+                }
+                
+                FlightRow(
+                    isFavorite = true,
+                    departureAirportCode = departAirport.iataCode,
+                    departureAirportName = departAirport.name,
+                    destinationAirportCode = destinationAirport.iataCode,
+                    destinationAirportName = destinationAirport.name,
+                    onFavoriteClick = onFavoriteClick
+                )
             }
         }
 }
