@@ -33,6 +33,8 @@ class SearchViewModel(
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState = _uiState.asStateFlow()
 
+    private var deletedRecord: Favorite? = null
+
     private var getAirportsJob: Job? = null
 
     init {
@@ -112,6 +114,24 @@ class SearchViewModel(
             favoritePreferencesRepository.updateUserPreferences(
                 searchValue = newValue
             )
+        }
+    }
+
+    fun removeFavorite(record: Favorite){
+        viewModelScope.launch {
+            deletedRecord = record
+
+            flightRepository.deleteFavoriteFlight(record)
+
+            val newFavoriteList = uiState.value.favoriteList.filter {
+                it != record
+            }
+
+            _uiState.update {
+                uiState.value.copy(
+                    favoriteList = newFavoriteList
+                )
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.flightsearch.models.Favorite
 import com.flightsearch.navigation.NavigationDestination
 
 object SearchDestination: NavigationDestination {
@@ -36,15 +37,30 @@ fun SearchScreen(
         if(uiState.searchQuery.isEmpty()){
 
             val favoriteList = uiState.favoriteList
-            //val airportList = uiState.airportList
+            val airportList = uiState.airportList
 
             if(favoriteList.isNotEmpty()){
+                FavoriteResult(
+                    airportList = airportList,
+                    favoriteList = favoriteList,
+                    onFavoriteClick = {
+                        departureCode: String, destinationCode: String ->
 
+                            val tmp = Favorite(
+                                id = favoriteList.filter {
+                                         (it.departureCode == departureCode && it.destinationCode == destinationCode)
+                                }.first().id,
+                                departureCode = departureCode,
+                                destinationCode = destinationCode
+                            )
+                            viewModel.removeFavorite(tmp)
+
+                    }
+                )
             }else{
                 Text(text= "No favorites yet")
             }
         } else {
-
             //val airports = uiState.airportList
 
             SearchResults(
