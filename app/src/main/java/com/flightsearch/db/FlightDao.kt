@@ -1,4 +1,4 @@
-package com.flightsearch.data
+package com.flightsearch.db
 
 import androidx.room.Dao
 import androidx.room.Delete

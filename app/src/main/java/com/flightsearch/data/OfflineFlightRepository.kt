@@ -1,5 +1,6 @@
 package com.flightsearch.data
 
+import com.flightsearch.db.FlightDao
 import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
 import kotlinx.coroutines.flow.Flow

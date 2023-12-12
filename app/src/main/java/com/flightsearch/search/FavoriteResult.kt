@@ -1,4 +1,4 @@
-package com.flightsearch.ui.screens.search
+package com.flightsearch.search
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
-import com.flightsearch.ui.screens.flight_screen.FlightRow
+import com.flightsearch.flight.FlightRow
 
 @Composable
 fun FavoriteResult(

@@ -1,4 +1,4 @@
-package com.flightsearch.ui.screens.search
+package com.flightsearch.search
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flightsearch.models.Favorite
 import com.flightsearch.navigation.NavigationDestination
+import com.flightsearch.search.viewmodel.SearchViewModel
 
 object SearchDestination: NavigationDestination {
     override val route = "home"

@@ -1,4 +1,4 @@
-package com.flightsearch.ui.screens.flight_screen
+package com.flightsearch.flight.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -13,10 +13,18 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.flightsearch.FlightSearchApplication
 import com.flightsearch.data.FlightRepository
+import com.flightsearch.flight.FlightScreenDestination
+import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+data class FlightUiState(
+    val code: String = "",
+    val favoriteList: List<Favorite> = emptyList(),
+    val destinationList: List<Airport> = emptyList(),
+    val departureAirport: Airport = Airport()
+)
 class FlightViewModel(
     savedStateHandle: SavedStateHandle,
     val flightRepository: FlightRepository

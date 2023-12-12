@@ -1,7 +1,7 @@
 package com.flightsearch.di
 
 import android.content.Context
-import com.flightsearch.data.AppDatabase
+import com.flightsearch.db.AppDatabase
 import com.flightsearch.data.FlightRepository
 import com.flightsearch.data.OfflineFlightRepository
 

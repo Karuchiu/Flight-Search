@@ -1,4 +1,4 @@
-package com.flightsearch.ui.screens.search
+package com.flightsearch.search
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

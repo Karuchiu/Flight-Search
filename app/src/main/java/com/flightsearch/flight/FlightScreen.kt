@@ -1,4 +1,4 @@
-package com.flightsearch.ui.screens.flight_screen
+package com.flightsearch.flight
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flightsearch.navigation.NavigationDestination
+import com.flightsearch.flight.viewmodel.FlightViewModel
 
 object FlightScreenDestination: NavigationDestination{
     override val route: String = "flight_screen"

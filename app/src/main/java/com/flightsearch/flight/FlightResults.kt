@@ -1,4 +1,4 @@
-package com.flightsearch.ui.screens.flight_screen
+package com.flightsearch.flight
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
