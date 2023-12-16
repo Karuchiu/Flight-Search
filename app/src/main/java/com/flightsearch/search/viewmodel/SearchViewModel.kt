@@ -1,15 +1,12 @@
 package com.flightsearch.search.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.flightsearch.FlightSearchApplication
 import com.flightsearch.data.FlightRepository
 import com.flightsearch.data.UserPreferencesRepository
 import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +14,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class SearchUiState(
     val searchQuery: String = "",
@@ -25,7 +23,8 @@ data class SearchUiState(
     val favoriteList: List<Favorite> = emptyList()
 )
 
-class SearchViewModel(
+@HiltViewModel
+class SearchViewModel @Inject constructor(
     val flightRepository: FlightRepository,
     private val favoritePreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
@@ -130,21 +129,6 @@ class SearchViewModel(
             _uiState.update {
                 uiState.value.copy(
                     favoriteList = newFavoriteList
-                )
-            }
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application =
-                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as FlightSearchApplication)
-                val flightRepository = application.container.flightRepository
-                val preferencesRepository = application.favoritePreferencesRepository
-                SearchViewModel(
-                    flightRepository = flightRepository,
-                    favoritePreferencesRepository = preferencesRepository
                 )
             }
         }

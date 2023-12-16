@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.flightsearch.navigation.NavigationDestination
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flightsearch.flight.viewmodel.FlightViewModel
+import com.flightsearch.navigation.NavigationDestination
 
 object FlightScreenDestination: NavigationDestination{
     override val route: String = "flight_screen"
@@ -16,8 +16,9 @@ object FlightScreenDestination: NavigationDestination{
 }
 
 @Composable
-fun FlightScreen() {
-    val viewModel: FlightViewModel = viewModel(factory = FlightViewModel.Factory)
+fun FlightScreen(
+    viewModel: FlightViewModel = hiltViewModel()
+) {
     val uiState = viewModel.uiState.collectAsState().value
 
     val context = LocalContext.current

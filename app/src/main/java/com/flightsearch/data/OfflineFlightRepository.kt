@@ -4,8 +4,11 @@ import com.flightsearch.db.FlightDao
 import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class OfflineFlightRepository(private val flightDao: FlightDao): FlightRepository {
+class OfflineFlightRepository @Inject constructor(
+    private val flightDao: FlightDao
+): FlightRepository {
     override fun getAllAirports(): Flow<List<Airport>> {
         return flightDao.getAllAirports()
     }

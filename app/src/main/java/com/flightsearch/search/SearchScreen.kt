@@ -6,7 +6,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flightsearch.models.Favorite
 import com.flightsearch.navigation.NavigationDestination
 import com.flightsearch.search.viewmodel.SearchViewModel
@@ -19,8 +19,8 @@ object SearchDestination: NavigationDestination {
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onSelectCode: (String) -> Unit,
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
-    val viewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory)
     val uiState = viewModel.uiState.collectAsState().value
     val airports = uiState.airportList
     Log.d("Composable", "Rendering FlightResults with ${airports.size}")
