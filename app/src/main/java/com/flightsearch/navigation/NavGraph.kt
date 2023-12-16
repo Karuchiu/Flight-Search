@@ -9,10 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.flightsearch.ui.screens.flight_screen.FlightScreen
-import com.flightsearch.ui.screens.flight_screen.FlightScreenDestination
-import com.flightsearch.ui.screens.search.SearchDestination
-import com.flightsearch.ui.screens.search.SearchScreen
+import com.flightsearch.flight.FlightScreen
+import com.flightsearch.flight.FlightScreenDestination
+import com.flightsearch.search.SearchDestination
+import com.flightsearch.search.SearchScreen
 
 @Composable
 fun FlightApp() {

@@ -1,34 +1,33 @@
-package com.flightsearch.ui.screens.search
+package com.flightsearch.search.viewmodel
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.room.Query
-import com.flightsearch.FlightSearchApplication
-import com.flightsearch.data.UserPreferencesRepository
 import com.flightsearch.data.FlightRepository
+import com.flightsearch.data.UserPreferencesRepository
 import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel(
+data class SearchUiState(
+    val searchQuery: String = "",
+    val selectedCode: String = "",
+    val airportList: List<Airport> = emptyList(),
+    val favoriteList: List<Favorite> = emptyList()
+)
+
+@HiltViewModel
+class SearchViewModel @Inject constructor(
     val flightRepository: FlightRepository,
     private val favoritePreferencesRepository: UserPreferencesRepository
-) : ViewModel(){
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState = _uiState.asStateFlow()
@@ -39,16 +38,16 @@ class SearchViewModel(
 
     init {
         viewModelScope.launch {
-            favoritePreferencesRepository.userPreferencesFlow.collect{
+            favoritePreferencesRepository.userPreferencesFlow.collect {
                 processSearchQueryFlow(it.searchValue)
             }
         }
     }
 
-    private fun processSearchQueryFlow(query: String){
+    private fun processSearchQueryFlow(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
 
-        if (query.isEmpty()){
+        if (query.isEmpty()) {
             viewModelScope.launch {
                 refreshAirportList()
                 refreshFavoriteList()
@@ -57,8 +56,8 @@ class SearchViewModel(
             getAirportsJob?.cancel()
 
             getAirportsJob = flightRepository.getAirportsByInput(query)
-            //on each emission
-                .onEach {result ->
+                //on each emission
+                .onEach { result ->
                     _uiState.update {
                         uiState.value.copy(
                             airportList = result
@@ -84,7 +83,7 @@ class SearchViewModel(
         }
     }
 
-    fun updateQuery(searchQuery: String){
+    fun updateQuery(searchQuery: String) {
         _uiState.update {
             it.copy(
                 searchQuery = searchQuery
@@ -93,11 +92,7 @@ class SearchViewModel(
         updatePreferenceSearchValue(searchQuery)
     }
 
-    /**
-     *  Essence of this code?
-     *  [Why does this not have viewModelScope while others have]
-     **/
-    fun updateSelectedCode(selectedCode: String){
+    fun updateSelectedCode(selectedCode: String) {
         _uiState.update {
             it.copy(
                 selectedCode = selectedCode
@@ -105,7 +100,7 @@ class SearchViewModel(
         }
     }
 
-    fun onQueryChange(query: String){
+    fun onQueryChange(query: String) {
         processSearchQueryFlow(query)
     }
 
@@ -117,7 +112,7 @@ class SearchViewModel(
         }
     }
 
-    fun removeFavorite(record: Favorite){
+    fun removeFavorite(record: Favorite) {
         viewModelScope.launch {
             deletedRecord = record
 
@@ -130,21 +125,6 @@ class SearchViewModel(
             _uiState.update {
                 uiState.value.copy(
                     favoriteList = newFavoriteList
-                )
-            }
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application =
-                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as FlightSearchApplication)
-                val flightRepository = application.container.flightRepository
-                val preferencesRepository = application.favoritePreferencesRepository
-                SearchViewModel(
-                    flightRepository = flightRepository,
-                    favoritePreferencesRepository = preferencesRepository
                 )
             }
         }

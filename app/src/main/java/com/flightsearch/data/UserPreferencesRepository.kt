@@ -10,13 +10,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+import javax.inject.Inject
 
 data class UserPreferences(
     val searchValue: String = ""
 )
 
 // Define a DataStore class to store and retrieve your data
-class UserPreferencesRepository(
+class UserPreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     private companion object {

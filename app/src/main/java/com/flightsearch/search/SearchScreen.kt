@@ -1,16 +1,16 @@
-package com.flightsearch.ui.screens.search
+package com.flightsearch.search
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flightsearch.models.Favorite
 import com.flightsearch.navigation.NavigationDestination
+import com.flightsearch.search.viewmodel.SearchViewModel
 
-object SearchDestination: NavigationDestination {
+object SearchDestination : NavigationDestination {
     override val route = "home"
 }
 
@@ -18,11 +18,10 @@ object SearchDestination: NavigationDestination {
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onSelectCode: (String) -> Unit,
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
-    val viewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory)
     val uiState = viewModel.uiState.collectAsState().value
     val airports = uiState.airportList
-    Log.d("Composable", "Rendering FlightResults with ${airports.size}")
 
     Column(modifier = modifier) {
         SearchTextField(
@@ -34,31 +33,33 @@ fun SearchScreen(
             }
         )
 
-        if(uiState.searchQuery.isEmpty()){
+        if (uiState.searchQuery.isEmpty()) {
 
             val favoriteList = uiState.favoriteList
             val airportList = uiState.airportList
 
-            if(favoriteList.isNotEmpty()){
+            if (favoriteList.isNotEmpty()) {
                 FavoriteResult(
                     airportList = airportList,
                     favoriteList = favoriteList,
-                    onFavoriteClick = {
-                        departureCode: String, destinationCode: String ->
+                    onFavoriteClick = { departureCode: String, destinationCode: String ->
 
+                        val matchingFavorite = favoriteList.find { favorite ->
+                            favorite.departureCode == departureCode && favorite.destinationCode == destinationCode
+                        }
+
+                        if (matchingFavorite != null) {
                             val tmp = Favorite(
-                                id = favoriteList.filter {
-                                         (it.departureCode == departureCode && it.destinationCode == destinationCode)
-                                }.first().id,
+                                id = matchingFavorite.id,
                                 departureCode = departureCode,
                                 destinationCode = destinationCode
                             )
                             viewModel.removeFavorite(tmp)
-
+                        }
                     }
                 )
-            }else{
-                Text(text= "No favorites yet")
+            } else {
+                Text(text = "No favorites yet")
             }
         } else {
             //val airports = uiState.airportList

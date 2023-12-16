@@ -1,4 +1,4 @@
-package com.flightsearch.data
+package com.flightsearch.db
 
 import android.content.Context
 import androidx.room.Database
