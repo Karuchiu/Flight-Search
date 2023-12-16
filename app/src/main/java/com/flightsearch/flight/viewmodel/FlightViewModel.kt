@@ -1,9 +1,6 @@
 package com.flightsearch.flight.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +11,7 @@ import com.flightsearch.models.Favorite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -32,15 +30,16 @@ data class FlightUiState(
 class FlightViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     val flightRepository: FlightRepository
-): ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow(FlightUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val airportCode: String = checkNotNull(savedStateHandle[FlightScreenDestination.codeArg])
+    private val airportCode: String =
+        checkNotNull(savedStateHandle[FlightScreenDestination.codeArg])
 
-    var flightAdded: Boolean by mutableStateOf(false)
-
-    //private var getFavoriteJob: Job? = null
+    private val _favoriteStatusMap =
+        MutableStateFlow<Map<Pair<String, String>, Boolean>>(emptyMap())
+    val favoriteStatusMapFlow: StateFlow<Map<Pair<String, String>, Boolean>> = _favoriteStatusMap
 
     init {
         viewModelScope.launch {
@@ -56,8 +55,11 @@ class FlightViewModel @Inject constructor(
             val airportsFlow = flightRepository.getAllAirportsByCode(airportCode)
             val departureAirport = flightRepository.getAirportByCodeFlow(airportCode)
 
-            combine(favoritesFlow, airportsFlow, departureAirport) {
-                    favorites, airports, departurePort->
+            combine(
+                favoritesFlow,
+                airportsFlow,
+                departureAirport
+            ) { favorites, airports, departurePort ->
                 Log.d("FlightVM", "Favs collected: $favorites")
 
                 // Now you can update your UI state with both favorites and airports data
@@ -70,30 +72,36 @@ class FlightViewModel @Inject constructor(
         }
     }
 
-    fun addFavoriteFlight(departureCode: String, destinationCode: String){
+    private fun updateFavoriteStatusMap(updatedMap: Map<Pair<String, String>, Boolean>) {
+        _favoriteStatusMap.value = updatedMap
+    }
+
+    fun addFavoriteFlight(departureCode: String, destinationCode: String) {
         viewModelScope.launch {
-            val favoriteFlow: Flow<Favorite?> = flightRepository.getSingleFavorite(departureCode, destinationCode)
+            val favoriteFlow: Flow<Favorite?> =
+                flightRepository.getSingleFavorite(departureCode, destinationCode)
 
-            favoriteFlow.collect{ favorite ->
-                Log.d("FavoriteFlow", "Emitted value: $favorite")
-
-                if(favorite != null){
-                    flightAdded = false
+            favoriteFlow.collect { favorite ->
+                if (favorite != null) {
                     flightRepository.deleteFavoriteFlight(favorite)
+                    updateFavoriteStatusMap(
+                        _favoriteStatusMap.value + (Pair(departureCode, destinationCode) to false)
+                    )
                 } else {
-                    flightAdded = true
                     val newFavorite = Favorite(
                         departureCode = departureCode,
                         destinationCode = destinationCode
                     )
                     flightRepository.insertFavoriteFlight(newFavorite)
+                    updateFavoriteStatusMap(
+                        _favoriteStatusMap.value + (Pair(departureCode, destinationCode) to true)
+                    )
                 }
 
-                flightRepository.getAllFavorites().collect{
+                flightRepository.getAllFavorites().collect {
                     _uiState.value = uiState.value.copy(favoriteList = it)
                 }
             }
-
         }
     }
 }

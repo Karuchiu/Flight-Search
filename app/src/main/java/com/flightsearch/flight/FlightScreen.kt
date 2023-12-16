@@ -21,21 +21,11 @@ fun FlightScreen(
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
-    val context = LocalContext.current
-
     Column {
         FlightResults(
             departureAirport = uiState.departureAirport,
             destinationList = uiState.destinationList,
-            favoriteList = uiState.favoriteList,
-            onFavoriteClick = { s1: String, s2: String ->
-                viewModel.addFavoriteFlight(s1, s2)
-                if (viewModel.flightAdded){
-                    Toast.makeText(context, "Removed Favorite", Toast.LENGTH_SHORT).show()
-                }else{
-                    Toast.makeText(context, "Added Favorite", Toast.LENGTH_SHORT).show()
-                }
-            }
+            viewModel = viewModel
         )
     }
 }

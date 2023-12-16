@@ -92,10 +92,6 @@ class SearchViewModel @Inject constructor(
         updatePreferenceSearchValue(searchQuery)
     }
 
-    /**
-     *  Essence of this code?
-     *  [Why does this not have viewModelScope while others have]
-     **/
     fun updateSelectedCode(selectedCode: String) {
         _uiState.update {
             it.copy(
