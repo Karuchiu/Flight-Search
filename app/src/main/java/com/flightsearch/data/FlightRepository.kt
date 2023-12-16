@@ -14,9 +14,9 @@ interface FlightRepository {
 
     fun getAirportByCodeFlow(code: String): Flow<Airport>
 
-    fun getAllFavorites(): Flow<List<Favorite>>
+    suspend fun getAllFavorites(): Flow<List<Favorite>>
 
-    fun getSingleFavorite(departureCode: String, destinationCode: String):Flow<Favorite>
+    fun getSingleFavorite(departureCode: String, destinationCode: String):Flow<Favorite?>
 
     suspend fun deleteFavoriteFlight(flight: Favorite)
 

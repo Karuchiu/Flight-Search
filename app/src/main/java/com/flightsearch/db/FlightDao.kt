@@ -55,8 +55,9 @@ interface FlightDao {
         SELECT * FROM favorite
         WHERE departure_code = :departureCode
         AND destination_code = :destinationCode
+        LIMIT 1
     """)
-    fun getSingleFavorite(departureCode: String, destinationCode: String): Flow<Favorite>
+    fun getSingleFavorite(departureCode: String, destinationCode: String): Flow<Favorite?>
 
     //@Insert(onConflict = OnConflictStrategy.IGNORE)
     @Insert(onConflict = OnConflictStrategy.REPLACE)

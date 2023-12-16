@@ -3,11 +3,14 @@ package com.flightsearch.data
 import com.flightsearch.db.FlightDao
 import com.flightsearch.models.Airport
 import com.flightsearch.models.Favorite
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OfflineFlightRepository @Inject constructor(
-    private val flightDao: FlightDao
+    private val flightDao: FlightDao,
+    val dispatcher: CoroutineDispatcher
 ): FlightRepository {
     override fun getAllAirports(): Flow<List<Airport>> {
         return flightDao.getAllAirports()
@@ -25,11 +28,13 @@ class OfflineFlightRepository @Inject constructor(
         return flightDao.getAirportByCodeFlow(code)
     }
 
-    override fun getAllFavorites(): Flow<List<Favorite>> {
-        return flightDao.getAllFavorites()
+    override suspend fun getAllFavorites(): Flow<List<Favorite>> {
+        return withContext(dispatcher) {
+             flightDao.getAllFavorites()
+        }
     }
 
-    override fun getSingleFavorite(departureCode: String, destinationCode: String): Flow<Favorite> {
+    override fun getSingleFavorite(departureCode: String, destinationCode: String): Flow<Favorite?> {
         return flightDao.getSingleFavorite(departureCode,destinationCode)
     }
 

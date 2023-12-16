@@ -36,18 +36,16 @@ class FlightViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FlightUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val airportCode: String = savedStateHandle[FlightScreenDestination.codeArg] ?: ""
+    private val airportCode: String = checkNotNull(savedStateHandle[FlightScreenDestination.codeArg])
 
     var flightAdded: Boolean by mutableStateOf(false)
 
     //private var getFavoriteJob: Job? = null
 
     init {
-        Log.d("FlightVM", "Before collecting airports")
         viewModelScope.launch {
             processFlightList(airportCode)
         }
-        Log.d("FlightVM", "After collecting airports")
     }
 
     private fun processFlightList(airportCode: String) {
@@ -61,7 +59,6 @@ class FlightViewModel @Inject constructor(
             combine(favoritesFlow, airportsFlow, departureAirport) {
                     favorites, airports, departurePort->
                 Log.d("FlightVM", "Favs collected: $favorites")
-                Log.d("FlightVM", "Airports collected: ${airports.size}")
 
                 // Now you can update your UI state with both favorites and airports data
                 _uiState.value = uiState.value.copy(
@@ -75,9 +72,11 @@ class FlightViewModel @Inject constructor(
 
     fun addFavoriteFlight(departureCode: String, destinationCode: String){
         viewModelScope.launch {
-            val favoriteFlow: Flow<Favorite> = flightRepository.getSingleFavorite(departureCode, destinationCode)
+            val favoriteFlow: Flow<Favorite?> = flightRepository.getSingleFavorite(departureCode, destinationCode)
 
             favoriteFlow.collect{ favorite ->
+                Log.d("FavoriteFlow", "Emitted value: $favorite")
+
                 if(favorite != null){
                     flightAdded = false
                     flightRepository.deleteFavoriteFlight(favorite)

@@ -13,6 +13,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 private const val FAVORITE_PREFERENCES_NAME = "favorite_preferences"
@@ -34,6 +36,12 @@ class AppModule {
     @Provides
     fun provideUserPreferencesRepository(dataStore: DataStore<Preferences>): UserPreferencesRepository{
         return UserPreferencesRepository(dataStore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
     }
 
     @Module
